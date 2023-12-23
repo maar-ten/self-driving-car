@@ -1,0 +1,29 @@
+class Envelop {
+    constructor(skeleton, width, roundness = 1) {
+        this.skeleton = skeleton;
+        this.poly = this.#generatePolygon(width, roundness);
+    }
+
+    #generatePolygon(width, roundness) {
+        const {p1, p2} = this.skeleton;
+
+        const radius = width / 2;
+        const alpha = angle(subtract(p1, p2));
+        const alpha_cw = alpha + Math.PI / 2;
+        const alpha_ccw = alpha - Math.PI / 2;
+
+        const pointsP1 = [];
+        const pointsP2 = [];
+        const step = Math.PI / Math.max(1, roundness);
+        const eps = step / 2;
+        for (let i = alpha_ccw; i <= alpha_cw + eps; i += step) {
+            pointsP1.push(translate(p1, i, radius));
+            pointsP2.push(translate(p2, Math.PI + i, radius));
+        }
+        return new Polygon(pointsP1.concat(pointsP2));
+    }
+
+    draw(ctx, options) {
+        this.poly.draw(ctx, options);
+    }
+}
