@@ -11,10 +11,10 @@ class GraphEditor {
         this.dragging = false;
         this.mouse = null;
         this.eventListeners = [
-            {event:'mousedown', fn: this.#handleMouseDown.bind(this)},
-            {event:'mousemove', fn: this.#handleMouseMove.bind(this)},
-            {event:'mouseup', fn: () => this.dragging = false},
-            {event:'contextmenu', fn: evt => evt.preventDefault()},
+            { event: 'mousedown', fn: this.#handleMouseDown.bind(this) },
+            { event: 'mousemove', fn: this.#handleMouseMove.bind(this) },
+            { event: 'mouseup', fn: () => this.dragging = false },
+            { event: 'contextmenu', fn: evt => evt.preventDefault() },
         ];
     }
 
@@ -62,7 +62,7 @@ class GraphEditor {
             }
             this.graph.addPoint(this.mouse);
             this.#selectPoint(this.mouse);
-            this.hovered = this.mouse;    
+            this.hovered = this.mouse;
         }
     }
 
@@ -70,7 +70,7 @@ class GraphEditor {
         if (this.selected) {
             this.graph.tryAddSegment(new Segment(this.selected, point));
         }
-        this.selected = point;    
+        this.selected = point;
     }
 
     #removePoint(point) {
@@ -90,13 +90,13 @@ class GraphEditor {
     display() {
         this.graph.draw(this.ctx);
         if (this.hovered) {
-            this.hovered.draw(this.ctx, {fill: true});
+            this.hovered.draw(this.ctx, { fill: true });
         }
         if (this.selected) {
             const intent = this.hovered ? this.hovered : this.mouse;
-            new Segment(this.selected, intent).draw(ctx, {dash: [3, 3]});
+            new Segment(this.selected, intent).draw(ctx, { dash: [3, 3] });
             this.selected.draw(this.ctx, {
-                outline: true, 
+                outline: true,
                 fill: this.selected === this.hovered
             });
 

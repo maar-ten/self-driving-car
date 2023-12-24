@@ -11,6 +11,19 @@ function getNearestPoint(loc, points, threshold = Number.MAX_SAFE_INTEGER) {
     return nearest?.point;
 }
 
+function getNearestSegment(loc, segments, threshold = Number.MAX_SAFE_INTEGER) {
+    const nearest = segments
+        .map(seg => ({ segment: seg, distance: seg.distanceToPoint(loc) }))
+        .reduce((prev, curr) => {
+            if (curr.distance < threshold && (!prev || curr.distance < prev.distance)) {
+                return curr;
+            }
+            return prev;
+        }, null);
+
+    return nearest?.segment;
+}
+
 function distance(p1, p2) {
     const dx = p1.x - p2.x;
     const dy = p1.y - p2.y;
@@ -95,4 +108,4 @@ function getFake3dPoint(point, viewPoint, height) {
     const dist = distance(point, viewPoint);
     const scaler = Math.atan(dist / 300) / (Math.PI / 2);
     return add(point, scale(dir, height * scaler));
- }
+}
