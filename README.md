@@ -8,4 +8,5 @@ This project follows the video series of [Radu Mariescu-Istodor](https://www.you
 
 ## Run the project
 If you have NodeJS installed simply run `npx http-server` inside the project dir.
-Or you can click on the Gitpod link at the top and start the project there.
+
+Or you can click on the links at the top to open the project in Gitpod or GitHub Codespaces and run it there.
