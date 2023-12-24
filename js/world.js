@@ -32,18 +32,19 @@ class World {
         this.trees = this.#generateTrees();
     }
 
-    #generateTrees(count = 10) {
+    #generateTrees() {
         const points = this.roadBorders
             .flatMap(s => [s.p1, s.p2])
-            .concat(this.buildings.flatMap(b => b.points));
+            .concat(this.buildings.flatMap(b => b.base.points));
         const left = Math.min(...points.map(p => p.x));
         const right = Math.max(...points.map(p => p.x));
         const top = Math.min(...points.map(p => p.y));
         const bottom = Math.max(...points.map(p => p.y));
 
-        const illegalPolys = this.envelopes
-            .map(e => e.poly)
-            .concat(this.buildings);
+        const illegalPolys = [
+            ...this.buildings.map(b => b.base),
+            ...this.envelopes.map(e => e.poly),
+        ];
 
         const trees = [];
         let tryCount = 0;
@@ -54,12 +55,12 @@ class World {
             );
 
             if (
-                !trees.some(t => distance(t, p) < this.treeSize) && // no overlap with other trees
+                !trees.some(t => distance(t.center, p) < this.treeSize) && // no overlap with other trees
                 !illegalPolys.some(poly => poly.containsPoint(p)) &&  // not inside other polygons
                 !illegalPolys.some(poly => poly.distanceToPoint(p) < this.treeSize / 2) && // save distance away from other polygons
                 illegalPolys.some(poly => poly.distanceToPoint(p) < this.treeSize * 2) // not too far away from other polygons
             ) {
-                trees.push(p);
+                trees.push(new Tree(p, this.treeSize));
                 tryCount = 0;
             }
             tryCount++;
@@ -115,14 +116,20 @@ class World {
             }
         }
 
-        return bases;
+        return bases.map(b => new Building(b));
     }
 
-    draw(ctx) {
+    draw(ctx, viewPoint) {
         this.envelopes.forEach(e => e.draw(ctx, { stroke: '#bbb', fill: '#bbb', lineWidth: 15 }));
         this.graph.segments.forEach(s => s.draw(ctx, { color: 'white', width: 4, dash: [10, 10] }));
         this.roadBorders.forEach(r => r.draw(ctx, { color: 'white', width: 5 }));
-        this.buildings.forEach(b => b.draw(ctx));
-        this.trees.forEach(t => t.draw(ctx, { size: this.treeSize, color: 'rgba(0, 0, 0, .5)' }));
+
+        this.buildings
+            .concat(this.trees)
+            .sort((a, b) =>
+                b.base.distanceToPoint(viewPoint) -
+                a.base.distanceToPoint(viewPoint)
+            )
+            .forEach(i => i.draw(ctx, viewPoint));
     }
 }
