@@ -1,4 +1,5 @@
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/maar-ten/self-driving-car)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/maar-ten/self-driving-car?quickstart=1)
 
 # Self Driving Car
 Is a pet project about a car that autonomously navigates a virtual world.
