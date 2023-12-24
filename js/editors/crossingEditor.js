@@ -1,4 +1,4 @@
-class StopEditor {
+class CrossingEditor {
     constructor(viewport, world) {
         this.viewport = viewport;
         this.world = world;

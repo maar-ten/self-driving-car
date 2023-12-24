@@ -20,6 +20,9 @@ class World {
         this.roadBorders = [];
         this.buildings = [];
         this.trees = [];
+        this.laneGuides = [];
+
+        this.markings = [];
 
         this.generate();
     }
@@ -30,6 +33,18 @@ class World {
         this.roadBorders = Polygon.union(this.envelopes.map(e => e.poly));
         this.buildings = this.#generateBuildings();
         this.trees = this.#generateTrees();
+        this.laneGuides = this.#generateLaneGuides();
+    }
+
+    #generateLaneGuides() {
+        const tmpEnvelopes = this.graph.segments.map(seg => new Envelop(
+            seg,
+            this.roadWidth / 2,
+            this.roadRoundness
+        ));
+
+        const guides = Polygon.union(tmpEnvelopes.map(e => e.poly));
+        return guides;
     }
 
     #generateTrees() {
@@ -121,6 +136,7 @@ class World {
 
     draw(ctx, viewPoint) {
         this.envelopes.forEach(e => e.draw(ctx, { stroke: '#bbb', fill: '#bbb', lineWidth: 15 }));
+        this.markings.forEach(m => m.draw(ctx));
         this.graph.segments.forEach(s => s.draw(ctx, { color: 'white', width: 4, dash: [10, 10] }));
         this.roadBorders.forEach(r => r.draw(ctx, { color: 'white', width: 5 }));
 

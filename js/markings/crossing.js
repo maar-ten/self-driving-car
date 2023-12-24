@@ -1,4 +1,4 @@
-class Stop {
+class Crossing {
     constructor(center, directionVector, width, height) {
         this.center  = center;
         this.directionVector = directionVector;
