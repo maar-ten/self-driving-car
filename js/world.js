@@ -84,23 +84,25 @@ class World {
             const buildingLength = len / buildingCount - this.spacing;
             const dir = seg.directionVector();
 
-            let q1 = seg.p1;
-            let q2 = add(q1, scale(dir, buildingLength));
-            const segments = [new Segment(q1, q2)];
-
-            for (let i = 2; i <= buildingCount; i++) {
-                q1 = add(q2, scale(dir, this.spacing));
-                q2 = add(q1, scale(dir, buildingLength));
-                segments.push(new Segment(q1, q2));
-            }
-
-            return segments;
+            return Array.from(Array(buildingCount)).reduce((acc, _, index) => {
+                let q1, q2;
+                if (index === 0) {
+                    q1 = seg.p1;
+                    q2 = add(q1, scale(dir, buildingLength));
+                } else {
+                    const prev = acc[acc.length - 1];
+                    q1 = add(prev.p2, scale(dir, this.spacing));
+                    q2 = add(q1, scale(dir, buildingLength));
+                }
+                return [...acc, new Segment(q1, q2)];
+            }, []);
         });
 
         const bases = supports
             .map(seg => new Envelop(seg, this.buildingWidth).poly);
 
         const eps = .001;
+
         for (let i = 0; i < bases.length - 1; i++) {
             for (let j = i + 1; j < bases.length; j++) {
                 if (
