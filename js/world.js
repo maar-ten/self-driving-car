@@ -5,7 +5,8 @@ class World {
         roadRoundness = 10,
         buildingWidth = 150,
         buildingMinLength = 150,
-        spacing = 50
+        spacing = 50,
+        treeSize = 160
     ) {
         this.graph = graph;
         this.roadWidth = roadWidth;
@@ -13,10 +14,12 @@ class World {
         this.buildingWidth = buildingWidth;
         this.buildingMinLength = buildingMinLength;
         this.spacing = spacing;
+        this.treeSize = treeSize;
 
         this.envelopes = [];
         this.roadBorders = [];
         this.buildings = [];
+        this.trees = [];
 
         this.generate();
     }
@@ -26,6 +29,42 @@ class World {
         this.envelopes = this.graph.segments.map(s => new Envelop(s, this.roadWidth, this.roadRoundness));
         this.roadBorders = Polygon.union(this.envelopes.map(e => e.poly));
         this.buildings = this.#generateBuildings();
+        this.trees = this.#generateTrees();
+    }
+
+    #generateTrees(count = 10) {
+        const points = this.roadBorders
+            .flatMap(s => [s.p1, s.p2])
+            .concat(this.buildings.flatMap(b => b.points));
+        const left = Math.min(...points.map(p => p.x));
+        const right = Math.max(...points.map(p => p.x));
+        const top = Math.min(...points.map(p => p.y));
+        const bottom = Math.max(...points.map(p => p.y));
+
+        const illegalPolys = this.envelopes
+            .map(e => e.poly)
+            .concat(this.buildings);
+
+        const trees = [];
+        let tryCount = 0;
+        while (tryCount < 100) {
+            const p = new Point(
+                lerp(left, right, Math.random()),
+                lerp(bottom, top, Math.random())
+            );
+
+            if (
+                !trees.some(t => distance(t, p) < this.treeSize) && // no overlap with other trees
+                !illegalPolys.some(poly => poly.containsPoint(p)) &&  // not inside other polygons
+                !illegalPolys.some(poly => poly.distanceToPoint(p) < this.treeSize / 2) && // save distance away from other polygons
+                illegalPolys.some(poly => poly.distanceToPoint(p) < this.treeSize * 2) // not too far away from other polygons
+            ) {
+                trees.push(p);
+                tryCount = 0;
+            }
+            tryCount++;
+        }
+        return trees;
     }
 
     #generateBuildings() {
@@ -58,17 +97,22 @@ class World {
             return segments;
         });
 
-        const bases = supports.map(seg => new Envelop(seg, this.buildingWidth).poly);
+        const bases = supports
+            .map(seg => new Envelop(seg, this.buildingWidth).poly);
 
+        const eps = .001;
         for (let i = 0; i < bases.length - 1; i++) {
             for (let j = i + 1; j < bases.length; j++) {
-                if (bases[i].intersectsPoly(bases[j])) {
+                if (
+                    bases[i].intersectsPoly(bases[j]) ||
+                    bases[i].distanceToPoly(bases[j]) < this.spacing - eps
+                ) {
                     bases.splice(j, 1);
                     j--;
                 }
             }
         }
-            
+
         return bases;
     }
 
@@ -77,5 +121,6 @@ class World {
         this.graph.segments.forEach(s => s.draw(ctx, { color: 'white', width: 4, dash: [10, 10] }));
         this.roadBorders.forEach(r => r.draw(ctx, { color: 'white', width: 5 }));
         this.buildings.forEach(b => b.draw(ctx));
+        this.trees.forEach(t => t.draw(ctx, { size: this.treeSize, color: 'rgba(0, 0, 0, .5)' }));
     }
 }
