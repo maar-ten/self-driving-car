@@ -10,15 +10,30 @@ class GraphEditor {
         this.hovered = null;
         this.dragging = false;
         this.mouse = null;
+        this.eventListeners = [
+            {event:'mousedown', fn: this.#handleMouseDown.bind(this)},
+            {event:'mousemove', fn: this.#handleMouseMove.bind(this)},
+            {event:'mouseup', fn: () => this.dragging = false},
+            {event:'contextmenu', fn: evt => evt.preventDefault()},
+        ];
+    }
 
+    enable() {
         this.#addEventListeners();
     }
 
+    disable() {
+        this.#removeEventListeners();
+        this.selected = false;
+        this.hovered = false;
+    }
+
     #addEventListeners() {
-        this.canvas.addEventListener('mousedown', this.#handleMouseDown.bind(this));
-        this.canvas.addEventListener('mousemove', this.#handleMouseMove.bind(this));
-        this.canvas.addEventListener('contextmenu', evt => evt.preventDefault());
-        this.canvas.addEventListener('mouseup', () => this.dragging = false);
+        this.eventListeners.forEach(el => this.canvas.addEventListener(el.event, el.fn));
+    }
+
+    #removeEventListeners() {
+        this.eventListeners.forEach(el => this.canvas.removeEventListener(el.event, el.fn));
     }
 
     #handleMouseMove(evt) {
