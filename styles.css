@@ -12,7 +12,12 @@ h1 {
     background-color: #2a5;
 }
 
-button {
+#fileInput {
+    display: none;
+}
+
+button, .file-input-label {
+    display: inline-block;
     background-color: white;
     font-size: 20px;
     padding: 5px 7px 7px 5px;

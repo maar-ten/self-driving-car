@@ -1,11 +1,20 @@
 class Envelop {
     constructor(skeleton, width, roundness = 1) {
-        this.skeleton = skeleton;
-        this.poly = this.#generatePolygon(width, roundness);
+        if (skeleton) {
+            this.skeleton = skeleton;
+            this.poly = this.#generatePolygon(width, roundness);
+        }
+    }
+
+    static load(info) {
+        const env = new Envelop();
+        env.skeleton = new Segment(info.skeleton.p1, info.skeleton.p2);
+        env.poly = Polygon.load(info.poly);
+        return env;
     }
 
     #generatePolygon(width, roundness) {
-        const {p1, p2} = this.skeleton;
+        const { p1, p2 } = this.skeleton;
 
         const radius = width / 2;
         const alpha = angle(subtract(p1, p2));
