@@ -9,19 +9,31 @@ class Sensor {
         this.readings = [];
     }
 
-    update(roadBorders) {
+    update(roadBorders, traffic) {
         this.#castRays();
-        this.readings = Array.from(this.rays, ray => this.#getReading(ray, roadBorders));
+        this.readings = Array.from(this.rays, ray => this.#getReading(ray, roadBorders, traffic));
     }
 
-    #getReading(ray, roadBorders) {
-        return roadBorders
-            .map(b => getIntersection(ray[0], ray[1], b[0], b[1]))
+    #getReading(ray, roadBorders, traffic) {
+        const trafficSegments = traffic.flatMap(t => this.#getSegments(t.polygon));
+        return Array.of(
+                ...trafficSegments,
+                ...roadBorders
+            )
+            .map(p => getIntersection(ray[0], ray[1], p[0], p[1]))
             .filter(i => i !== null)
             .reduce(
                 (acc, curr) => !acc || acc.offset > curr.offset ? curr : acc,
                 undefined
             );
+    }
+
+    #getSegments(poly) {
+        const segments = [];
+        for (let i = 0; i < poly.length; i++) {
+            segments.push([poly[i], poly[(i + 1) % poly.length]]);
+        }
+        return segments;
     }
 
     #castRays() {

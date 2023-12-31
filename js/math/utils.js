@@ -108,6 +108,10 @@ function polysIntersect(poly1, poly2) {
         .some(i => i !== null);
 }
 
+function pairs(arr) {
+    return arr.flatMap((v, i, arr) => arr.slice(i + 1).map(w => [v, w]));
+}
+
 function lerp(a, b, t) {
     return a + (b - a) * t;
 }
