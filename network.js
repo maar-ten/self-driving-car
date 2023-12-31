@@ -1,68 +1,56 @@
-class NeuralNetwork{
-    constructor(neuronCounts){
-        this.levels=[];
-        for(let i=0;i<neuronCounts.length-1;i++){
+class NeuralNetwork {
+    constructor(neuronCounts) {
+        this.levels = [];
+
+        // todo with modern array methods
+        for (let i = 0; i < neuronCounts.length - 1; i++) {
             this.levels.push(new Level(
-                neuronCounts[i],neuronCounts[i+1]
+                neuronCounts[i], neuronCounts[i + 1]
             ));
         }
     }
 
-    static feedForward(givenInputs,network){
-        let outputs=Level.feedForward(
-            givenInputs,network.levels[0]);
-        for(let i=1;i<network.levels.length;i++){
-            outputs=Level.feedForward(
-                outputs,network.levels[i]);
+    static feedForward(givenInputs, network) {
+        // todo with modern array methods
+        let outputs = Level.feedForward(givenInputs, network.levels[0]);
+        for (let i = 1; i < network.levels.length; i++) {
+            outputs = Level.feedForward(
+                outputs, network.levels[i]);
         }
         return outputs;
     }
 }
 
-class Level{
-    constructor(inputCount,outputCount){
-        this.inputs=new Array(inputCount);
-        this.outputs=new Array(outputCount);
-        this.biases=new Array(outputCount);
+class Level {
+    constructor(inputCount, outputCount) {
+        this.inputs = Array(inputCount).fill();
+        this.outputs = Array(outputCount).fill();
+        this.biases = Array(outputCount).fill();
 
-        this.weights=[];
-        for(let i=0;i<inputCount;i++){
-            this.weights[i]=new Array(outputCount);
-        }
+        this.weights = Array(inputCount).fill(Array(outputCount).fill());
 
         Level.#randomize(this);
     }
 
-    static #randomize(level){
-        for(let i=0;i<level.inputs.length;i++){
-            for(let j=0;j<level.outputs.length;j++){
-                level.weights[i][j]=Math.random()*2-1;
-            }
-        }
+    static #randomize(level) {
+        level.inputs
+            .forEach((_, i) =>
+                level.outputs.forEach((_, j) =>
+                    level.weights[i][j] = Math.random() * 2 - 1));
 
-        for(let i=0;i<level.biases.length;i++){
-            level.biases[i]=Math.random()*2-1;
-        }
+        level.biases.forEach((_, i) => level.biases[i] = Math.random() * 2 - 1);
     }
 
-    static feedForward(givenInputs,level){
-        for(let i=0;i<level.inputs.length;i++){
-            level.inputs[i]=givenInputs[i];
-        }
+    static feedForward(givenInputs, level) {
+        level.inputs.forEach((_, i, arr) => arr[i] = givenInputs[i]);
 
-        for(let i=0;i<level.outputs.length;i++){
-            let sum=0
-            for(let j=0;j<level.inputs.length;j++){
-                sum+=level.inputs[j]*level.weights[j][i];
-            }
-
-            if(sum>level.biases[i]){
-                level.outputs[i]=1;
-            }else{
-                level.outputs[i]=0;
-            } 
-        }
-
+        level.outputs.forEach((_, i, arr) => {
+            const sum = level.inputs.reduce(
+                (acc, curr, j) => acc += curr * level.weights[j][i],
+                0
+            );
+            arr[i] = sum > level.biases[i] ? 1 : 0;
+        });
         return level.outputs;
     }
 }

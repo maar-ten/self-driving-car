@@ -24,7 +24,7 @@ class Sensor {
             .filter(i => i !== null)
             .reduce(
                 (acc, curr) => !acc || acc.offset > curr.offset ? curr : acc,
-                undefined
+                null
             );
     }
 
