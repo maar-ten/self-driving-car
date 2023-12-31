@@ -94,6 +94,20 @@ function getIntersection(A, B, C, D) {
     return null;
 }
 
+function polysIntersect(poly1, poly2) {
+    const pairs1 = poly1.flatMap((p1, index, arr) => arr.slice(index + 1).map(p2 => [p1, p2]));
+    const pairs2 = poly2.flatMap((p1, index, arr) => arr.slice(index + 1).map(p2 => [p1, p2]));
+    return pairs1
+        .flatMap(pair1 => pairs2
+            .map(pair2 => getIntersection(
+                pair1[0],
+                pair1[1],
+                pair2[0],
+                pair2[1]
+            )))
+        .some(i => i !== null);
+}
+
 function lerp(a, b, t) {
     return a + (b - a) * t;
 }
