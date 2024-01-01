@@ -125,6 +125,15 @@ function getRandomColor() {
     return `hsl(${hue}, 100%, 60%)`;
 }
 
+function getRgba(value) {
+    const alpha = Math.abs(value);
+    const R = value < 0 ? 0 : 255;
+    const G = value < 0 ? 0 : 255;
+    const B = value > 0 ? 0 : 255;
+
+    return `rgba(${R}, ${G}, ${B}, ${alpha})`;
+}
+
 function getFake3dPoint(point, viewPoint, height) {
     const dir = normalize(subtract(point, viewPoint));
     const dist = distance(point, viewPoint);
