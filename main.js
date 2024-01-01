@@ -46,6 +46,37 @@ function discard() {
     localStorage.removeItem('bestBrain');
 }
 
+function download() {
+    const element = document.createElement('a');
+    element.setAttribute(
+        'href',
+        `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(bestCar.brain))}`
+    );
+
+    const filename = 'name.brain';
+    element.setAttribute('download', filename);
+    element.click();
+}
+
+function load(evt) {
+    const file = evt.target.files[0];
+
+    if (!file) {
+        alert('No file selected.');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsText(file);
+
+    reader.onload = event => {
+        const fileContent = event.target.result;
+        const jsonData = JSON.parse(fileContent);
+        localStorage.setItem('bestBrain', JSON.stringify(jsonData));
+        location.reload();
+    }
+}
+
 function generateCars(n) {
     return Array(n).fill().map(_ => new Car(road.getLaneCenter(1), 100, 30, 50, 'AI'));
 }
