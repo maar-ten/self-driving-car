@@ -27,16 +27,20 @@ class Level {
         this.outputs = Array(outputCount).fill();
         this.biases = Array(outputCount).fill();
 
-        this.weights = Array(inputCount).fill(Array(outputCount).fill());
+        this.weights = [];
+        for (let i = 0; i < inputCount; i++) {
+            this.weights[i] = Array(outputCount);
+        }
 
         Level.#randomize(this);
     }
 
     static #randomize(level) {
-        level.inputs
-            .forEach((_, i) =>
-                level.outputs.forEach((_, j) =>
-                    level.weights[i][j] = Math.random() * 2 - 1));
+        for (let i = 0; i < level.inputs.length; i++) {
+            for (let j = 0; j < level.outputs.length; j++) {
+                level.weights[i][j] = Math.random() * 2 - 1;
+            }
+        }
 
         level.biases.forEach((_, i) => level.biases[i] = Math.random() * 2 - 1);
     }
