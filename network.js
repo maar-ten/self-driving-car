@@ -19,6 +19,15 @@ class NeuralNetwork {
         }
         return outputs;
     }
+
+    static mutate(network, amount = 1) {
+        const mutationFn = a => lerp(a, Math.random() * 2 - 1, amount);
+        network.levels.forEach(l => {
+            l.biases.forEach((bias, i) => l.biases[i] = mutationFn(bias));
+            l.weights.forEach((v, i) =>
+                v.forEach((weight, j) => l.weights[i][j] = mutationFn(weight)));
+        });
+    }
 }
 
 class Level {
