@@ -29,7 +29,7 @@ class World {
 
         this.frameCount = 0;
 
-        this.generate();
+        // this.generate();
     }
 
     static load(info) {
@@ -220,7 +220,7 @@ class World {
         this.frameCount++;
     }
 
-    draw(ctx, viewPoint, showStartMarkings = true) {
+    draw(ctx, viewPoint, showStartMarkings = true, renderRadius = 1000) {
         this.#updateLights();
 
         this.envelopes.forEach(e => e.draw(ctx, { stroke: '#bbb', fill: '#bbb', lineWidth: 15 }));
@@ -238,6 +238,7 @@ class World {
 
         this.buildings
             .concat(this.trees)
+            .filter(i => i.base.distanceToPoint(viewPoint) < renderRadius)
             .sort((a, b) =>
                 b.base.distanceToPoint(viewPoint) -
                 a.base.distanceToPoint(viewPoint)
