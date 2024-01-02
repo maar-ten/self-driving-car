@@ -24,6 +24,9 @@ class World {
 
         this.markings = [];
 
+        this.cars = [];
+        this.bestCar = undefined;
+
         this.frameCount = 0;
 
         this.generate();
@@ -217,13 +220,21 @@ class World {
         this.frameCount++;
     }
 
-    draw(ctx, viewPoint) {
+    draw(ctx, viewPoint, showStartMarkings = true) {
         this.#updateLights();
 
         this.envelopes.forEach(e => e.draw(ctx, { stroke: '#bbb', fill: '#bbb', lineWidth: 15 }));
-        this.markings.forEach(m => m.draw(ctx));
+        this.markings.filter(m => m.type !== 'start' || showStartMarkings)
+            .forEach(m => m.draw(ctx));
         this.graph.segments.forEach(s => s.draw(ctx, { color: 'white', width: 4, dash: [10, 10] }));
         this.roadBorders.forEach(r => r.draw(ctx, { color: 'white', width: 5 }));
+
+        ctx.globalAlpha = .2;
+        this.cars.forEach(c => c.draw(ctx));
+        ctx.globalAlpha = 1;
+        if (this.bestCar) {
+            this.bestCar.draw(ctx, true);
+        }
 
         this.buildings
             .concat(this.trees)
