@@ -33,3 +33,9 @@ button, .file-input-label {
 #carCanvas {
     background: #2a5;
 }
+
+#miniMapCanvas {
+    background: black;
+    border: solid 2px yellow;
+    border-radius: 50%;
+}

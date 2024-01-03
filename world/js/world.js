@@ -238,7 +238,7 @@ class World {
 
         this.buildings
             .concat(this.trees)
-            .filter(i => i.base.distanceToPoint(viewPoint) < renderRadius)
+            .filter(item => item.base.distanceToPoint(viewPoint) < renderRadius)
             .sort((a, b) =>
                 b.base.distanceToPoint(viewPoint) -
                 a.base.distanceToPoint(viewPoint)

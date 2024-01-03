@@ -1,10 +1,14 @@
 const carCanvas = document.getElementById('carCanvas');
 carCanvas.width = window.innerWidth - 330;
+carCanvas.height = window.innerHeight;
+
 const networkCanvas = document.getElementById('networkCanvas');
 networkCanvas.width = 300;
+networkCanvas.height = window.innerHeight - 300;
 
-carCanvas.height = window.innerHeight;
-networkCanvas.height = window.innerHeight;
+const miniMapCanvas = document.getElementById('miniMapCanvas');
+miniMapCanvas.width = 300;
+miniMapCanvas.height = 300;
 
 const carCtx = carCanvas.getContext('2d');
 const networkCtx = networkCanvas.getContext('2d');
@@ -14,6 +18,7 @@ const worldInfo = worldString ? JSON.parse(worldString) : null;
 const world = worldInfo ? World.load(worldInfo) : new World(new Graph());
 
 const viewport = new Viewport(carCanvas, world.zoom, world.offset);
+const miniMap = new MiniMap(miniMapCanvas, world.graph, 300);
 
 const cars = generateCars(1);
 let bestCar = cars[0];
@@ -21,7 +26,7 @@ if (localStorage.getItem('bestBrain')) {
     cars.forEach((car, i) => {
         car.brain = JSON.parse(localStorage.getItem('bestBrain'));
         if (i !== 0) {
-            NeuralNetwork.mutate(car.brain, .1);
+            NeuralNetwork.mutate(car.brain, .2);
         }
     });
 }
@@ -94,6 +99,7 @@ function animate(time) {
     viewport.reset();
     const viewPoint = scale(viewport.getOffset(), -1);
     world.draw(carCtx, viewPoint, false);
+    miniMap.update(viewPoint);
 
     traffic.forEach(car => car.draw(carCtx, 'red'));
 
