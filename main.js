@@ -20,7 +20,7 @@ const world = worldInfo ? World.load(worldInfo) : new World(new Graph());
 const viewport = new Viewport(carCanvas, world.zoom, world.offset);
 const miniMap = new MiniMap(miniMapCanvas, world.graph, 300);
 
-const cars = generateCars(1);
+const cars = generateCars(100);
 let bestCar = cars[0];
 if (localStorage.getItem('bestBrain')) {
     cars.forEach((car, i) => {
@@ -86,8 +86,12 @@ function generateCars(n) {
 }
 
 function animate(time) {
-    traffic.forEach(car => car.update(roadBorders, []));
-    cars.forEach(c => c.update(roadBorders, traffic));
+    for (let i = 0; i < traffic.length; i++) {
+        traffic[i].update(roadBorders, []);
+    }
+    for (let i = 0; i < cars.length; i++) {
+        cars[i].update(roadBorders, traffic);
+    }
 
     bestCar = cars.find(c => c.fitness === Math.max(...cars.map(c => c.fitness)));
 

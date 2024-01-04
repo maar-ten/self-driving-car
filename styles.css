@@ -22,6 +22,10 @@ button, .file-input-label {
     cursor: pointer;
 }
 
+button:hover, .file-input-label:hover {
+    background-color: grey;
+}
+
 #fileInput {
     display: none;
 }

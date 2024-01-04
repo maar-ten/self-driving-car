@@ -95,17 +95,20 @@ function getIntersection(A, B, C, D) {
 }
 
 function polysIntersect(poly1, poly2) {
-    const pairs1 = poly1.flatMap((p1, index, arr) => arr.slice(index + 1).map(p2 => [p1, p2]));
-    const pairs2 = poly2.flatMap((p1, index, arr) => arr.slice(index + 1).map(p2 => [p1, p2]));
-    return pairs1
-        .flatMap(pair1 => pairs2
-            .map(pair2 => getIntersection(
-                pair1[0],
-                pair1[1],
-                pair2[0],
-                pair2[1]
-            )))
-        .some(i => i !== null);
+    for (let i = 0; i < poly1.length; i++) {
+        for (let j = 0; j < poly2.length; j++) {
+            const touch = getIntersection(
+                poly1[i],
+                poly1[(i + 1) % poly1.length],
+                poly2[j],
+                poly2[(j + 1) % poly2.length]
+            );
+            if (touch) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 function pairs(arr) {

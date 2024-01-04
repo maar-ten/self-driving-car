@@ -60,8 +60,17 @@ class Car {
     }
 
     #assessDamage(roadBorders, traffic) {
-        return roadBorders.some(b => polysIntersect(this.polygon, b)) ||
-            traffic.some(t => polysIntersect(this.polygon, t.polygon));
+        for (let i = 0; i < roadBorders.length; i++) {
+            if (polysIntersect(this.polygon, roadBorders[i])) {
+                return true;
+            }
+        }
+        for (let i = 0; i < traffic.length; i++) {
+            if (polysIntersect(this.polygon, traffic[i].polygon)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     #createPolygon() {
@@ -126,7 +135,7 @@ class Car {
     }
 
     draw(ctx, drawSensor = false) {
-        ctx.save();
+                ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(-this.angle);
         if (!this.damaged) {
