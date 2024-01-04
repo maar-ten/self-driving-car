@@ -135,7 +135,11 @@ class Car {
     }
 
     draw(ctx, drawSensor = false) {
-                ctx.save();
+        if (this.sensor && drawSensor) {
+            this.sensor.draw(ctx);
+        }
+
+        ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(-this.angle);
         if (!this.damaged) {
@@ -156,9 +160,5 @@ class Car {
             this.height
         );
         ctx.restore();
-
-        if (this.sensor && drawSensor) {
-            this.sensor.draw(ctx);
-        }
     }
 }

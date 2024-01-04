@@ -75,25 +75,24 @@ class Sensor {
 
     draw(ctx) {
         this.rays.forEach(([start, end], index) => {
-            let split = end;
+            let endpoint = end;
 
             if (this.readings[index]) {
-                split = this.readings[index];
+                endpoint = this.readings[index];
+            }
+
+            if (endpoint === end) {
+                return; // don't draw rays that aren't sense anything
             }
 
             ctx.beginPath();
             ctx.lineWidth = 2;
-            ctx.strokeStyle = 'yellow';
+            ctx.strokeStyle = 'blue';
             ctx.moveTo(start.x, start.y);
-            ctx.lineTo(split.x, split.y);
+            ctx.lineTo(endpoint.x, endpoint.y);
             ctx.stroke();
 
-            ctx.beginPath();
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'black';
-            ctx.moveTo(split.x, split.y);
-            ctx.lineTo(end.x, end.y);
-            ctx.stroke();
+            new Point(endpoint.x, endpoint.y).draw(ctx, {size: 10, color: 'blue', fill: true})
         });
     }
 }
