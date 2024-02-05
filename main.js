@@ -20,19 +20,21 @@ const world = worldInfo ? World.load(worldInfo) : new World(new Graph());
 const viewport = new Viewport(carCanvas, world.zoom, world.offset);
 const miniMap = new MiniMap(miniMapCanvas, world.graph, 300);
 
-const cars = generateCars(100);
+const cars = generateCars(1);
 let bestCar = cars[0];
 if (localStorage.getItem('bestBrain')) {
     cars.forEach((car, i) => {
         car.brain = JSON.parse(localStorage.getItem('bestBrain'));
         if (i !== 0) {
-            NeuralNetwork.mutate(car.brain, .2);
+            NeuralNetwork.mutate(car.brain, .1);
         }
     });
 }
 
 const traffic = [];
-const roadBorders = world.roadBorders.map(s => [s.p1, s.p2]);
+
+const routeEnvelop = world.route.map(s => new Envelop(s, world.roadWidth, world.roadRoundness));
+const routeBorders = Polygon.union(routeEnvelop.map(e => e.poly)).map(p => [p.p1, p.p2]);
 
 animate();
 
@@ -87,10 +89,10 @@ function generateCars(n) {
 
 function animate(time) {
     for (let i = 0; i < traffic.length; i++) {
-        traffic[i].update(roadBorders, []);
+        traffic[i].update(routeBorders, []);
     }
     for (let i = 0; i < cars.length; i++) {
-        cars[i].update(roadBorders, traffic);
+        cars[i].update(routeBorders, traffic);
     }
 
     bestCar = cars.find(c => c.fitness === Math.max(...cars.map(c => c.fitness)));

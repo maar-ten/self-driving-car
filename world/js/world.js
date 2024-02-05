@@ -23,13 +23,14 @@ class World {
         this.laneGuides = [];
 
         this.markings = [];
+        this.route = [];
 
         this.cars = [];
         this.bestCar = undefined;
 
         this.frameCount = 0;
 
-        // this.generate();
+        this.generate();
     }
 
     static load(info) {
@@ -49,6 +50,7 @@ class World {
         world.laneGuides = info.laneGuides.map(g => new Segment(g.p1, g.p2));
 
         world.markings = info.markings.map(m => Marking.load(m));
+        world.route = info.route ? info.route.map(r => new Segment(new Point(r.p1.x, r.p1.y), new Point(r.p2.x, r.p2.y))) : [];
 
         world.zoom = info.zoom;
         world.offset = info.offset;
@@ -228,6 +230,11 @@ class World {
             .forEach(m => m.draw(ctx));
         this.graph.segments.forEach(s => s.draw(ctx, { color: 'white', width: 4, dash: [10, 10] }));
         this.roadBorders.forEach(r => r.draw(ctx, { color: 'white', width: 5 }));
+        
+        const routePoly = this.route.map(r => new Envelop(r, this.roadWidth, this.roadRoundness))
+            .map(e => e.poly);
+        const route = Polygon.union(routePoly);
+        route.forEach(r => r.draw(ctx, { color: 'blue', width: 5}));
 
         ctx.globalAlpha = .2;
         this.cars.forEach(c => c.draw(ctx));

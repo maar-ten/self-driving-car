@@ -25,6 +25,7 @@
         <button id="lightBtn" onclick="setMode('light')">🚦</button>
         <button id='startBtn' onclick="setMode('start')">🚙</button>
         <button id="targetBtn" onclick="setMode('target')">🎯</button>
+        <button id="routeBtn" onclick="setMode('route')">⤴️</button>
 
         <div id="osmPanel" style="display: none;">
             <textarea id="osmDataContainer" rows="10" cols="50" placeholder="Paste OSM data here"></textarea>
@@ -54,6 +55,7 @@
     <script src="js/editors/lightEditor.js"></script>
     <script src="js/editors/targetEditor.js"></script>
     <script src="js/editors/yieldEditor.js"></script>
+    <script src="js/editors/routeEditor.js"></script>
     <script src="js/items/tree.js"></script>
     <script src="js/items/building.js"></script>
     <script src="js/math/utils.js"></script>
@@ -63,6 +65,7 @@
     <script src="js/primitives/segment.js"></script>
     <script src="js/primitives/polygon.js"></script>
     <script src="js/primitives/envelop.js"></script>
+
     <script>
         myCanvas.width = 600;
         myCanvas.height = 600;
@@ -85,6 +88,7 @@
             light: { button: lightBtn, editor: new LightEditor(viewport, world) },
             target: { button: targetBtn, editor: new TargetEditor(viewport, world) },
             yield: { button: yieldBtn, editor: new YieldEditor(viewport, world) },
+            route: { button: routeBtn, editor: new RouteEditor(viewport, world) },
         };
         let oldGraphHash = graph.hash();
 
@@ -95,7 +99,7 @@
         function animate() {
             viewport.reset();
             if (graph.hash() !== oldGraphHash) {
-                // world.generate();
+                world.generate();
                 oldGraphHash = graph.hash();
             }
             const viewPoint = scale(viewport.getOffset(), -1);
