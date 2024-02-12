@@ -10,3 +10,25 @@ This project follows the video series of [Radu Mariescu-Istodor](https://radufro
 If you have NodeJS installed simply run `npx http-server` inside the project dir.
 
 Or you can click on the links at the top to open the project in Gitpod or GitHub Codespaces and run it there.
+
+## OSM data
+Query for https://overpass-turbo.eu/
+
+```
+[out:json][timeout:25];
+// gather results
+(
+  way['highway']
+  ['area' !~ 'yes']
+  ['highway' !~ 'path']
+  ['highway' !~ 'footway']
+  ['highway' !~ 'steps']
+  ['highway' !~ 'cycleway']
+  ['highway' !~ 'platform']
+  ({{bbox}});
+);
+out body;
+>;
+// print results
+out skel;
+```
