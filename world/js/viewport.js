@@ -13,6 +13,7 @@ class Viewport {
             offset: new Point(0, 0),
             active: false,
         };
+        this.mouseDown = false; // used for touchpad dragging
 
         this.#addEventListeners();
     }
@@ -47,16 +48,18 @@ class Viewport {
     }
 
     #handleMouseDown(evt) {
-        if (evt.button === 1) {
-            this.drag.start = this.getMouse(evt);
-            this.drag.active = true;
-        }
+        this.mouseDown = true;
     }
 
     #handleMouseMove(evt) {
-        if (this.drag.active) {
-            this.drag.end = this.getMouse(evt);
-            this.drag.offset = subtract(this.drag.end, this.drag.start);
+        if (this.mouseDown) {
+            if (this.drag.active) {
+                this.drag.end = this.getMouse(evt);
+                this.drag.offset = subtract(this.drag.end, this.drag.start);    
+            } else {
+                this.drag.start = this.getMouse(evt);
+                this.drag.active = true;
+                }
         }
     }
 
@@ -70,6 +73,7 @@ class Viewport {
                 active: false,
             };    
         }
+        this.mouseDown = false;
     }
 
     #handleMouseWheel(evt) {
