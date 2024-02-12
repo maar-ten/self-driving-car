@@ -35,7 +35,7 @@
             </div>
         </div>
     </div>
-
+        
     <script src="js/world.js"></script>
     <script src="js/viewport.js"></script>
     <script src="js/markings/marking.js"></script>
@@ -124,7 +124,7 @@
                 `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(world))}`
             );
 
-            const filename = 'name.world';
+            const filename = `name-${new Date().toISOString()}.world`;
             element.setAttribute('download', filename);
             element.click();
 
