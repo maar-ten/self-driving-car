@@ -13,9 +13,10 @@ miniMapCanvas.height = 300;
 const carCtx = carCanvas.getContext('2d');
 const networkCtx = networkCanvas.getContext('2d');
 
-const worldString = localStorage.getItem('world');
-const worldInfo = worldString ? JSON.parse(worldString) : null;
-const world = worldInfo ? World.load(worldInfo) : new World(new Graph());
+// The word is loaded via http because local storage is too small
+// const worldString = localStorage.getItem('world');
+// const worldInfo = worldString ? JSON.parse(worldString) : null;
+// const world = worldInfo ? World.load(worldInfo) : new World(new Graph());
 
 const viewport = new Viewport(carCanvas, world.zoom, world.offset);
 const miniMap = new MiniMap(miniMapCanvas, world.graph, 300);
