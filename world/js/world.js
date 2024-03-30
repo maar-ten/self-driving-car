@@ -237,7 +237,7 @@ class World {
         route.forEach(r => r.draw(ctx, { color: 'blue', width: 5}));
 
         ctx.globalAlpha = .2;
-        this.cars.forEach(c => c.draw(ctx));
+        this.cars.forEach(c => c.draw(ctx, false));
         ctx.globalAlpha = 1;
         if (this.bestCar) {
             this.bestCar.draw(ctx, true);

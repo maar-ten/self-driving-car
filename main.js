@@ -15,7 +15,7 @@ const networkCtx = networkCanvas.getContext('2d');
 
 const worldString = localStorage.getItem('world');
 const worldInfo = worldString ? JSON.parse(worldString) : null;
-const world = worldInfo ? World.load(worldInfo) : new World(new Graph());
+// const world = worldInfo ? World.load(worldInfo) : new World(new Graph());
 
 const viewport = new Viewport(carCanvas, world.zoom, world.offset);
 const miniMap = new MiniMap(miniMapCanvas, world.graph, 300);
@@ -33,8 +33,7 @@ if (localStorage.getItem('bestBrain')) {
 
 const traffic = [];
 
-const routeEnvelop = world.route.map(s => new Envelop(s, world.roadWidth, world.roadRoundness));
-const routeBorders = Polygon.union(routeEnvelop.map(e => e.poly)).map(p => [p.p1, p.p2]);
+const roadBorders = world.roadBorders.map((s) => [s.p1, s.p2]);
 
 animate();
 
@@ -83,16 +82,19 @@ function load(evt) {
 function generateCars(n) {
     const adjustedAngleFn = v => -angle(v) + Math.PI / 2;
     return world.markings.filter(m => m.type === 'start')
-        .flatMap(m => Array(n).fill().map(_ =>
-            new Car(m.center.x, m.center.y, 30, 50, 'AI', adjustedAngleFn(m.directionVector))));
+        .flatMap(m => Array(n).fill().map(_ => {
+            const car = new Car(m.center.x, m.center.y, 30, 50, 'AI', adjustedAngleFn(m.directionVector));
+            car.load(carInfo);
+            return car;
+        }));
 }
 
 function animate(time) {
     for (let i = 0; i < traffic.length; i++) {
-        traffic[i].update(routeBorders, []);
+        traffic[i].update(roadBorders, []);
     }
     for (let i = 0; i < cars.length; i++) {
-        cars[i].update(routeBorders, traffic);
+        cars[i].update(roadBorders, traffic);
     }
 
     bestCar = cars.find(c => c.fitness === Math.max(...cars.map(c => c.fitness)));

@@ -119,9 +119,10 @@
             world.offset = viewport.offset;
 
             const element = document.createElement('a');
+            const worldJson = encodeURIComponent(`const world = World.load(${JSON.stringify(world)});`);
             element.setAttribute(
                 'href',
-                `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(world))}`
+                `data:application/json;charset=utf-8,${worldJson}`
             );
 
             const filename = `name-${new Date().toISOString()}.world`;

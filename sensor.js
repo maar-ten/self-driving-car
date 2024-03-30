@@ -4,6 +4,7 @@ class Sensor {
         this.rayCount = 5;
         this.rayLength = 150;
         this.raySpread = Math.PI / 2;
+        this.rayOffset = 0;
 
         this.rays = [];
         this.readings = [];
@@ -61,7 +62,7 @@ class Sensor {
                     this.raySpread / 2,
                     -this.raySpread / 2,
                     this.rayCount === 1 ? .5 : index / (this.rayCount - 1)
-                ) + this.car.angle;
+                ) + this.car.angle + this.rayOffset;
 
                 const start = { x: this.car.x, y: this.car.y };
                 const end = {
@@ -81,18 +82,31 @@ class Sensor {
                 endpoint = this.readings[index];
             }
 
-            if (endpoint === end) {
-                return; // don't draw rays that aren't sense anything
-            }
-
             ctx.beginPath();
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'blue';
-            ctx.moveTo(start.x, start.y);
-            ctx.lineTo(endpoint.x, endpoint.y);
+            ctx.lineWidth=2;
+            ctx.strokeStyle="yellow";
+            ctx.moveTo(
+                start.x,
+                start.y
+            );
+            ctx.lineTo(
+                endpoint.x,
+                endpoint.y
+            );
             ctx.stroke();
 
-            new Point(endpoint.x, endpoint.y).draw(ctx, {size: 10, color: 'blue', fill: true})
+            ctx.beginPath();
+            ctx.lineWidth=2;
+            ctx.strokeStyle="black";
+            ctx.moveTo(
+                end.x,
+                end.y
+            );
+            ctx.lineTo(
+                endpoint.x,
+                endpoint.y
+            );
+            ctx.stroke();
         });
     }
 }
