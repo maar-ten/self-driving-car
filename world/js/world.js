@@ -64,7 +64,9 @@ class World {
         this.roadBorders = Polygon.union(this.envelopes.map(e => e.poly));
         this.buildings = this.#generateBuildings();
         this.trees = this.#generateTrees();
-        this.laneGuides = this.#generateLaneGuides();
+
+        this.laneGuides.length = 0;
+        this.laneGuides.push(...this.#generateLaneGuides());
     }
 
     #generateLaneGuides() {
