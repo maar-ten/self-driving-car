@@ -20,7 +20,7 @@ const worldInfo = worldString ? JSON.parse(worldString) : null;
 const viewport = new Viewport(carCanvas, world.zoom, world.offset);
 const miniMap = new MiniMap(miniMapCanvas, world.graph, 300);
 
-const cars = generateCars(1);
+const cars = generateCars(500);
 let bestCar = cars[0];
 if (localStorage.getItem('bestBrain')) {
     cars.forEach((car, i) => {
@@ -33,7 +33,14 @@ if (localStorage.getItem('bestBrain')) {
 
 const traffic = [];
 
-const roadBorders = world.roadBorders.map((s) => [s.p1, s.p2]);
+let roadBorders = [];
+const target = world.markings.find(m => m instanceof Target);
+if (target) {
+    world.generateCorridor(bestCar, target.center);
+    roadBorders = world.corridor.map(s => [s.p1, s.p2]);
+} else {
+    roadBorders = world.roadBorders.map(s => [s.p1, s.p2]);
+}
 
 animate();
 

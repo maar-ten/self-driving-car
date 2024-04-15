@@ -108,7 +108,7 @@ class Graph {
             delete p.prev;
         });
 
-        return path.reverse();
+        return path;
     }
 
     dispose() {
