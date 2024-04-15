@@ -64,6 +64,53 @@ class Graph {
         return this.segments.filter(seg => seg.includes(point));
     }
 
+    getSegmentsLeavingFromPoint(point) {
+        const segments = this.getSegmentsWithPoint(point);
+        return segments.filter(seg => !seg.oneWay || seg.p1.equals(point));
+    }
+
+    getShortestPath(start, end) {
+        this.points.forEach(p => {
+            p.dist = Number.MAX_SAFE_INTEGER;
+            p.visited = false;
+        });
+
+        let currentPoint = start;
+        currentPoint.dist = 0;
+
+        while (!end.visited) {
+            const segs = this.getSegmentsLeavingFromPoint(currentPoint);
+            segs.forEach(s => {
+                const otherPoint = s.p1.equals(currentPoint) ? s.p2 : s.p1;
+                if (currentPoint.dist + s.length() < otherPoint.dist) {
+                    otherPoint.dist = currentPoint.dist + s.length();
+                    otherPoint.prev = currentPoint;
+                }
+            });
+            currentPoint.visited = true;
+
+            const unvisited = this.points.filter(p => !p.visited);
+            const dists = unvisited.map(p => p.dist)
+            currentPoint = unvisited.find(p => p.dist === Math.min(...dists));
+        }
+
+        const path = [];
+        currentPoint = end;
+        while (currentPoint) {
+            path.unshift(currentPoint);
+            currentPoint = currentPoint.prev;
+        }
+
+        // remove temporary data properties
+        this.points.forEach(p => {
+            delete p.dist;
+            delete p.visited;
+            delete p.prev;
+        });
+
+        return path.reverse();
+    }
+
     dispose() {
         this.points.length = 0;
         this.segments.length = 0;

@@ -6,6 +6,8 @@ class GraphEditor {
 
         this.ctx = this.canvas.getContext('2d');
 
+        this.start = null;
+        this.end = null;
         this.selected = null;
         this.hovered = null;
         this.dragging = false;
@@ -30,6 +32,15 @@ class GraphEditor {
 
     #addEventListeners() {
         this.eventListeners.forEach(el => this.canvas.addEventListener(el.event, el.fn));
+        window.addEventListener('keydown', e => {
+            if (this.hovered) {
+                if (e.key === 's') {
+                    this.start = this.hovered;
+                } else if (e.key === 'e') {
+                    this.end = this.hovered;
+                }
+            }
+        })
     }
 
     #removeEventListeners() {
@@ -100,6 +111,16 @@ class GraphEditor {
                 fill: this.selected === this.hovered
             });
 
+        }
+
+        if (this.start && this.end) {
+            const path = this.graph.getShortestPath(this.start, this.end);
+            path.forEach(p => {
+                p.draw(this.ctx, {size: 50, color: 'blue'})
+                if (p.prev) {
+                    new Segment(p, p.prev).draw(this.ctx, { width: 20 });
+                }
+            });
         }
     }
 }
